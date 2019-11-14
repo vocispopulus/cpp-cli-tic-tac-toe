@@ -1,15 +1,23 @@
 #include <iostream>
 
 #include <array>
+#include <algorithm>
 
-bool won(const std::array<int, 9>& arr)
+const bool won(const std::array<int, 9>& arr)
 {
-  return false;
+  return (arr[0] == arr[1] == arr[2] && arr[2] != 0) ||
+         (arr[3] == arr[4] == arr[5] && arr[5] != 0) ||
+         (arr[6] == arr[7] == arr[8] && arr[8] != 0) ||
+         (arr[0] == arr[3] == arr[6] && arr[6] != 0) ||
+         (arr[1] == arr[4] == arr[7] && arr[7] != 0) ||
+         (arr[2] == arr[5] == arr[8] && arr[8] != 0) ||
+         (arr[0] == arr[4] == arr[8] && arr[8] != 0) ||
+         (arr[2] == arr[4] == arr[6] && arr[6] != 0);
 }
 
-bool full(const std::array<int, 9>& arr)
+const bool full(const std::array<int, 9>& arr)
 {
-  return false;
+  return std::none_of(arr.cbegin(), arr.cend(), [](int i){return i==0;});
 }
 
 void draw_board(const std::array<int, 9>& arr)
@@ -40,12 +48,13 @@ int switch_player(int current_player)
 int main()
 {
   std::array<int, 9> squares = {0,0,0,0,0,0,0,0,0};
-  int player = 1;
-  while (!won(squares) || full(squares)) {
+  int player = 2;
+  while ((!won(squares)) && !full(squares)) {
+    player=switch_player(player);
     draw_board(squares);
     squares[enter_position()] = player;
-    player=switch_player(player);
   }
+  std::cout << "Player "<< player << "wins the game." << std::endl;
   draw_board(squares);
   return 0;
 }
